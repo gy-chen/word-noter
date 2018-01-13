@@ -12,22 +12,30 @@ def convert_frame_to_image(frame):
     return Image.fromarray(frame)
 
 
-def get_hough_lines(image):
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+def get_hough_lines(frame):
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     edges = cv2.Canny(gray, 50, 150, apertureSize=3)
     return cv2.HoughLines(edges, 1, np.pi / 180, 200)
 
 
-def get_median_hough_line(image):
+def get_median_hough_line(frame):
     """Get a hough line that with median theta of all hough lines of the image
 
-    :param image:
+    :param frame:
     :return:
     """
-    lines = get_hough_lines(image)
+    lines = get_hough_lines(frame)
     lines = lines.reshape((-1, 2))
     median_index = np.argsort(lines, axis=0)[len(lines) // 2][1]
     return lines[median_index]
+
+
+def rotate_frame_horizontal_to_hough_line(frame, line):
+    _, theta = line
+    rows, cols = frame.shape[:2]
+    degree = np.rad2deg(theta) % 90
+    M = cv2.getRotationMatrix2D((cols / 2, rows / 2), degree, 1)
+    return cv2.warpAffine(img, M, (cols, rows))
 
 
 if __name__ == '__main__':
@@ -41,16 +49,16 @@ if __name__ == '__main__':
     # image = convert_frame_to_image(frame)
     img = cv2.imread('test.png')
     line = get_median_hough_line(img)
-    rho, theta = line
-    a = np.cos(theta)
-    b = np.sin(theta)
-    x0 = a * rho
-    y0 = b * rho
-    x1 = int(x0 + 1000 * (-b))
-    y1 = int(y0 + 1000 * (a))
-    x2 = int(x0 - 1000 * (-b))
-    y2 = int(y0 - 1000 * (a))
+    # rho, theta = line
+    # a = np.cos(theta)
+    # b = np.sin(theta)
+    # x0 = a * rho
+    # y0 = b * rho
+    # x1 = int(x0 + 1000 * (-b))
+    # y1 = int(y0 + 1000 * (a))
+    # x2 = int(x0 - 1000 * (-b))
+    # y2 = int(y0 - 1000 * (a))
+    #
+    # cv2.line(img, (x1, y1), (x2, y2), (0, 0, 255), 2)
 
-    cv2.line(img, (x1, y1), (x2, y2), (0, 0, 255), 2)
-
-    cv2.imwrite('test_out.jpg', img)
+    cv2.imwrite('test_out.jpg', rotate_frame_horizontal_to_hough_line(img, line))
