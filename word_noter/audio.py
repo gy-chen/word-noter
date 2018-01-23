@@ -6,11 +6,13 @@
 import audioop
 import asyncio
 import contextlib
+import collections
 import enum
 import math
-import queue
-import pyaudio
 import logging
+import queue
+import wave
+import pyaudio
 
 recorded_sounds = queue.Queue()
 
@@ -19,7 +21,7 @@ FORMAT = pyaudio.paInt16
 CHANNELS = 2
 RATE = 44100
 
-LARGE_SOUND_THRESHOLD = 750
+LARGE_SOUND_THRESHOLD = 1000
 
 
 @contextlib.contextmanager
@@ -48,6 +50,17 @@ def is_sound_large(data):
     return math.sqrt(abs(audioop.avg(data, 4))) > LARGE_SOUND_THRESHOLD
 
 
+def save_record(data, file="output.wav", channels=CHANNELS, format=FORMAT, rate=RATE):
+    if isinstance(data, collections.Iterable):
+        data = b''.join(data)
+    wf = wave.open(file, 'wb')
+    wf.setnchannels(channels)
+    wf.setsampwidth(pyaudio.get_sample_size(format))
+    wf.setframerate(rate)
+    wf.writeframes(data)
+    wf.close()
+
+
 class StopRecordException(Exception):
     pass
 
@@ -63,7 +76,8 @@ class LargeSoundActivateRecorder:
     """Start record when detect large sound and stop recording when no large sound detected for specific seconds
     """
 
-    def __init__(self, chunk=CHUNK, rate=RATE, stop_record_seconds=1):
+    def __init__(self, channels=CHANNELS, chunk=CHUNK, rate=RATE, stop_record_seconds=2):
+        self._channels = channels
         self._chunk = chunk
         self._rate = rate
         self._stop_record_seconds = stop_record_seconds
@@ -71,7 +85,7 @@ class LargeSoundActivateRecorder:
         self._reset()
 
     def record(self):
-        with get_input_stream(chunk=self._chunk, rate=self._rate) as stream:
+        with get_input_stream(channels=self._channels, chunk=self._chunk, rate=self._rate) as stream:
             try:
                 while True:
                     data = stream.read(self._chunk)
@@ -121,16 +135,21 @@ class LargeSoundActivateRecorder:
         self._idle_sounds = []
 
 
-async def large_sound_active_record_task(out_queue=recorded_sounds):
+async def large_sound_active_record_task(out_queue=recorded_sounds, **kargs):
     """Keep listen sound in background, and record sound when detect large sounds
 
     :param out_queue: the queue to put the recorded sounds
     """
-    recorder = LargeSoundActivateRecorder()
+    recorder = LargeSoundActivateRecorder(**kargs)
     while True:
         recorded_sound = recorder.record()
-        out_queue.put(recorded_sound)
-        await asyncio.sleep(0)
+        try:
+            out_queue.put(recorded_sound)
+        except queue.Empty:
+            pass
+        finally:
+            logging.debug('monshin')
+            await asyncio.sleep(1)
 
 
 if __name__ == '__main__':
