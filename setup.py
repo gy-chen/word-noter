@@ -8,6 +8,9 @@ setup(
         'pyocr',
         'pynput',
         'websockets',
-        'opencv-python'
+        'opencv-python',
+        'pyaudio',
+        'google-cloud-speech',
+        'pocketsphinx'
     ]
 )

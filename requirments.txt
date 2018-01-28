@@ -2,4 +2,6 @@ pyocr
 pynput
 websockets
 opencv-python
-
+pyaudio
+google-cloud-speech
+pocketsphinx
