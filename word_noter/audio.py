@@ -51,7 +51,7 @@ def is_sound_large(data):
 
 
 def save_record(data, file="output.wav", channels=CHANNELS, format=FORMAT, rate=RATE):
-    if isinstance(data, collections.Iterable):
+    if type(data) is not bytes and isinstance(data, collections.Iterable):
         data = b''.join(data)
     wf = wave.open(file, 'wb')
     wf.setnchannels(channels)
@@ -66,10 +66,10 @@ class StopRecordException(Exception):
 
 
 class RecordStatus(enum.Enum):
-    WAIT = enum.auto()
-    RECORDING = enum.auto()
-    IDLE = enum.auto()
-    STOP = enum.auto()
+    WAIT = 1
+    RECORDING = 2
+    IDLE = 3
+    STOP = 4
 
 
 class LargeSoundActivateRecorder:
@@ -135,11 +135,12 @@ class LargeSoundActivateRecorder:
         self._idle_sounds = []
 
 
-async def large_sound_active_record_task(out_queue=recorded_sounds, **kargs):
+async def active_record_large_sound(out_queue=recorded_sounds, **kargs):
     """Keep listen sound in background, and record sound when detect large sounds
 
     :param out_queue: the queue to put the recorded sounds
     """
+    # TODO use threading to do this, or the event loop will be blocked here
     recorder = LargeSoundActivateRecorder(**kargs)
     while True:
         recorded_sound = recorder.record()
@@ -148,11 +149,11 @@ async def large_sound_active_record_task(out_queue=recorded_sounds, **kargs):
         except queue.Empty:
             pass
         finally:
-            logging.debug('monshin')
-            await asyncio.sleep(1)
+            await asyncio.sleep(0)
 
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
-    event_loop = asyncio.get_event_loop()
-    event_loop.run_until_complete(large_sound_active_record_task())
+    recorder = LargeSoundActivateRecorder(channels=1)
+    data = recorder.record()
+    save_record(data, 'output.wav', channels=1)

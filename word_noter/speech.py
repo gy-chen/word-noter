@@ -8,7 +8,7 @@ from .audio import save_record
 def recognize(data):
     content = io.BytesIO()
     save_record(data, content, channels=1)
-    return recognize_from_wav_content(content.getvalue()).results
+    return recognize_from_wav_content(content.getvalue())
 
 
 def recognize_from_wav_content(wav_content):
