@@ -25,17 +25,21 @@ def get_median_hough_line(frame):
     :return:
     """
     lines = get_hough_lines(frame)
+    if lines is None:
+        return None
     lines = lines.reshape((-1, 2))
     median_index = np.argsort(lines, axis=0)[len(lines) // 2][1]
     return lines[median_index]
 
 
 def rotate_frame_horizontal_to_hough_line(frame, line):
+    if line is None:
+        return frame
     _, theta = line
     rows, cols = frame.shape[:2]
     degree = np.rad2deg(theta) % 90
     M = cv2.getRotationMatrix2D((cols / 2, rows / 2), degree, 1)
-    return cv2.warpAffine(img, M, (cols, rows))
+    return cv2.warpAffine(frame, M, (cols, rows))
 
 
 if __name__ == '__main__':

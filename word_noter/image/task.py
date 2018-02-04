@@ -8,7 +8,7 @@ from word_noter.image.tesseract import recognize_words
 trigger_key = 'k'
 
 
-async def recognize_words_from_user_image():
+async def recognize_words_from_user_image(recognize_words=recognize_words):
     """Recognize words from image that captured by user intent
 
     :return: list of recognized words
@@ -21,9 +21,10 @@ async def recognize_words_from_user_image():
                 pressed_key = pressed_keys.get(block=False)
                 if pressed_key.__dict__.get('char') != trigger_key:
                     continue
+                median_hough_line = get_median_hough_line(frame)
+                if median_hough_line is not None:
+                    frame = rotate_frame_horizontal_to_hough_line(frame, median_hough_line)
                 image = convert_frame_to_image(frame)
-                image = rotate_frame_horizontal_to_hough_line(image, get_median_hough_line(image))
-                # TODO maybe make recognize_words as a parameter so can use different methods to recognize words
                 return recognize_words(image)
             except Empty:
                 continue
