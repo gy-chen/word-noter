@@ -1,6 +1,6 @@
 import io
 import pocketsphinx
-from .audio import save_record
+from word_noter.speech.audio import save_record
 
 
 def recognize(data):
