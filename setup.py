@@ -11,6 +11,7 @@ setup(
         'opencv-python',
         'pyaudio',
         'google-cloud-speech',
-        'pocketsphinx'
+        'pocketsphinx',
+        'google-cloud-vision'
     ]
 )

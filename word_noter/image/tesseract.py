@@ -1,7 +1,5 @@
-import re
 import pyocr
-
-word_pattern = re.compile(r'([a-z]+)', re.IGNORECASE)
+from .text import find_all_words
 
 tool = None
 if pyocr.get_available_tools():
@@ -17,7 +15,7 @@ def recognize_words(image):
     if tool is None:
         raise ValueError("Please install tesseract")
     recognized_text = tool.image_to_string(image)
-    return word_pattern.findall(recognized_text)
+    return find_all_words(recognized_text)
 
 
 if __name__ == '__main__':

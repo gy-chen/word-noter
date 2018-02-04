@@ -3,7 +3,7 @@ from queue import Empty
 from word_noter.image.camera import ImageCapture
 from word_noter.image import convert_frame_to_image, rotate_frame_horizontal_to_hough_line, get_median_hough_line
 from word_noter.keybord_listener import pressed_keys
-from word_noter.image.tesseract import recognize_words
+from word_noter.image.gcloud import recognize_words
 
 trigger_key = 'k'
 

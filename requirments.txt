@@ -5,3 +5,4 @@ opencv-python
 pyaudio
 google-cloud-speech
 pocketsphinx
+google-cloud-vision
