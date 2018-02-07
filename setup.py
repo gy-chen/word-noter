@@ -12,6 +12,7 @@ setup(
         'pyaudio',
         'google-cloud-speech',
         'pocketsphinx',
-        'google-cloud-vision'
+        'google-cloud-vision',
+        'websockets'
     ]
 )
