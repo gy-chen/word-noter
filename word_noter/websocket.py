@@ -1,6 +1,4 @@
-import asyncio
 import websockets
-from queue import Empty
 
 # TODO put these in separate setting file
 HOST = '127.0.0.1'
@@ -8,15 +6,10 @@ PORT = 4413
 
 
 def create_word_sender(in_queue):
-    async def word_sender(websocket):
+    async def word_sender(websocket, path):
         while True:
-            try:
-                word = in_queue.get(block=False)
-                await websocket.send(word)
-            except Empty:
-                pass
-            finally:
-                await asyncio.sleep()
+            word = await in_queue.get()
+            await websocket.send(word)
 
     return word_sender
 
