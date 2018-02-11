@@ -8,9 +8,10 @@ from word_noter.image.gcloud import recognize_words
 # TODO put this setting in separate file
 trigger_key = 'k'
 captured_images = asyncio.Queue()
+recognized_words = asyncio.Queue()
 
 
-async def capture_image_from_user(captured_image_out_queue=captured_images, pressed_key_queue=pressed_keys):
+async def keep_capture_image_from_user(captured_image_out_queue=captured_images, pressed_key_queue=pressed_keys):
     with ImageCapture() as cap:
         while True:
             try:
@@ -22,20 +23,29 @@ async def capture_image_from_user(captured_image_out_queue=captured_images, pres
             except Empty:
                 pass
             finally:
-                await asyncio.sleep()
+                await asyncio.sleep(0)
 
 
-async def recognize_words_from_image(image_in_queue=captured_images, recognize_words=recognize_words):
+async def keep_recognize_words_from_image(image_in_queue=captured_images, recognized_word_out_queue=recognized_words,
+                                          recognize_words=recognize_words):
     """Recognize words from image that captured by user intent
 
     :return: list of recognized words
     """
-    frame = await image_in_queue.get()
-    median_hough_line = get_median_hough_line(frame)
-    if median_hough_line is not None:
-        frame = rotate_frame_horizontal_to_hough_line(frame, median_hough_line)
-    image = convert_frame_to_image(frame)
-    return recognize_words(image)
+    while True:
+        frame = await image_in_queue.get()
+        median_hough_line = get_median_hough_line(frame)
+        if median_hough_line is not None:
+            frame = rotate_frame_horizontal_to_hough_line(frame, median_hough_line)
+        image = convert_frame_to_image(frame)
+        await recognized_word_out_queue.put(recognize_words(image))
+
+
+def create_main_task():
+    return asyncio.gather(
+        keep_capture_image_from_user(),
+        keep_recognize_words_from_image()
+    )
 
 
 if __name__ == '__main__':
@@ -48,10 +58,13 @@ if __name__ == '__main__':
     loop = asyncio.get_event_loop()
 
 
-    async def main():
+    async def print_recognized_words():
         while True:
-            words = await recognize_words_from_image()
+            words = await recognized_words.get()
             print(words)
 
 
-    loop.run_until_complete(main())
+    loop.run_until_complete(asyncio.gather(
+        create_main_task(),
+        print_recognized_words())
+    )
