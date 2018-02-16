@@ -1,9 +1,11 @@
 import asyncio
+import logging
 from queue import Empty
 from word_noter.image.camera import ImageCapture
 from word_noter.image import convert_frame_to_image, rotate_frame_horizontal_to_hough_line, get_median_hough_line
 from word_noter.keybord_listener import pressed_keys
 from word_noter.image.gcloud import recognize_words
+from word_noter.keybord_listener import listener
 
 # TODO put this setting in separate file
 trigger_key = 'k'
@@ -19,6 +21,7 @@ async def keep_capture_image_from_user(captured_image_out_queue=captured_images,
                 pressed_key = pressed_key_queue.get(block=False)
                 if pressed_key.__dict__.get('char') != trigger_key:
                     continue
+                logging.debug('Captured a frame')
                 await captured_image_out_queue.put(frame)
             except Empty:
                 pass
@@ -38,23 +41,30 @@ async def keep_recognize_words_from_image(image_in_queue=captured_images, recogn
         if median_hough_line is not None:
             frame = rotate_frame_horizontal_to_hough_line(frame, median_hough_line)
         image = convert_frame_to_image(frame)
-        await recognized_word_out_queue.put(recognize_words(image))
+        logging.debug('Try to recognize words from captured image')
+        for word in recognize_words(image):
+            print(type(word))
+            logging.debug('recognized word: %s' % word)
+            await recognized_word_out_queue.put(word)
 
 
-def create_main_task():
+async def start_keyboard_listener():
+    listener.start()
+
+
+def create_main_task(recognized_word_out_queue=recognized_words):
     return asyncio.gather(
+        start_keyboard_listener(),
         keep_capture_image_from_user(),
-        keep_recognize_words_from_image()
+        keep_recognize_words_from_image(recognized_word_out_queue=recognized_word_out_queue)
     )
 
 
 if __name__ == '__main__':
     import logging
-    from word_noter.keybord_listener import listener
 
     logging.basicConfig(level=logging.INFO)
 
-    listener.start()
     loop = asyncio.get_event_loop()
 
 

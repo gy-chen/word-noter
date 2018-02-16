@@ -8,11 +8,13 @@ def create_recognize_from_image_task():
 
     :return:
     """
-    recognize_words_task = create_main_task()
+    recognize_words_task = create_main_task(recognized_words)
     server = create_word_sender_server(recognized_words)
     return asyncio.gather(recognize_words_task, server)
 
 
 if __name__ == '__main__':
+    import logging
+    logging.basicConfig(level=logging.DEBUG)
     loop = asyncio.get_event_loop()
     loop.run_until_complete(create_recognize_from_image_task())
