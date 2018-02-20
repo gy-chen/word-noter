@@ -13,6 +13,7 @@ setup(
         'google-cloud-speech',
         'pocketsphinx',
         'google-cloud-vision',
-        'websockets'
+        'websockets',
+        'Faker'
     ]
 )

@@ -7,3 +7,4 @@ google-cloud-speech
 pocketsphinx
 google-cloud-vision
 websockets
+Faker
