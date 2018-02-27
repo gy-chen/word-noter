@@ -8,3 +8,6 @@ pocketsphinx
 google-cloud-vision
 websockets
 Faker
+sqlalchemy
+flask
+flask-restful

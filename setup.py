@@ -14,6 +14,9 @@ setup(
         'pocketsphinx',
         'google-cloud-vision',
         'websockets',
-        'Faker'
+        'Faker',
+        'sqlalchemy',
+        'flask',
+        'flask-restful'
     ]
 )
