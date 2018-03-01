@@ -17,6 +17,7 @@ setup(
         'Faker',
         'sqlalchemy',
         'flask',
-        'flask-restful'
+        'flask-restful',
+        'cerberus'
     ]
 )

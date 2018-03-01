@@ -11,3 +11,4 @@ Faker
 sqlalchemy
 flask
 flask-restful
+cerberus
