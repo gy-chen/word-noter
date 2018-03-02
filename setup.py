@@ -11,13 +11,14 @@ setup(
         'opencv-python',
         'pyaudio',
         'google-cloud-speech',
-        'pocketsphinx',
+        #'pocketsphinx',
         'google-cloud-vision',
         'websockets',
         'Faker',
         'sqlalchemy',
         'flask',
         'flask-restful',
-        'cerberus'
+        'cerberus',
+        'flask-cors'
     ]
 )

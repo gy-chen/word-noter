@@ -12,3 +12,4 @@ sqlalchemy
 flask
 flask-restful
 cerberus
+flask-cors
