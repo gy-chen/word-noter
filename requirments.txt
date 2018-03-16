@@ -13,3 +13,5 @@ flask
 flask-restful
 cerberus
 flask-cors
+python-scoketio
+eventlet

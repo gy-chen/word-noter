@@ -11,7 +11,7 @@ setup(
         'opencv-python',
         'pyaudio',
         'google-cloud-speech',
-        #'pocketsphinx',
+        'pocketsphinx',
         'google-cloud-vision',
         'websockets',
         'Faker',
@@ -19,6 +19,8 @@ setup(
         'flask',
         'flask-restful',
         'cerberus',
-        'flask-cors'
+        'flask-cors',
+        'python-socketio',
+        'eventlet'
     ]
 )
