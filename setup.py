@@ -21,6 +21,6 @@ setup(
         'cerberus',
         'flask-cors',
         'python-socketio',
-        'eventlet'
+        'aiohttp'
     ]
 )
