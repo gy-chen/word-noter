@@ -2,9 +2,9 @@ pyocr
 pynput
 websockets
 opencv-python
-pyaudio
+#pyaudio
 google-cloud-speech
-pocketsphinx
+#pocketsphinx
 google-cloud-vision
 websockets
 Faker
@@ -13,5 +13,7 @@ flask
 flask-restful
 cerberus
 flask-cors
-python-scoketio
+python-socketio
 aiohttp
+flask-migrate
+flask-sqlalchemy

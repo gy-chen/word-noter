@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="word-noter",
+    name="web-noter",
     description="Help note unrecognized words while reading",
     packages=find_packages(),
     install_requires=[
@@ -21,6 +21,8 @@ setup(
         'cerberus',
         'flask-cors',
         'python-socketio',
-        'aiohttp'
+        'aiohttp',
+        'flask-migrate',
+        'flask-sqlalchemy'
     ]
 )

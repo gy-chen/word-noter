@@ -1,11 +1,8 @@
-from flask import Flask, request
-from flask_restful import Api, Resource, marshal_with, fields
-from flask_cors import CORS
-from word_noter.word.model import Word
+from flask import request
+from flask_restful import Api, Resource, marshal_with, fields, reqparse, abort
+from ..model import Word
 
-app = Flask(__name__)
-CORS(app)
-api = Api(app)
+api = Api()
 
 word_fields = {
     'id': fields.Integer,
@@ -26,7 +23,7 @@ class WordResource(Resource):
         return word
 
 
-class WordsResource(Resource):
+class WordListResource(Resource):
     """Display words list
 
     """
@@ -38,17 +35,16 @@ class WordsResource(Resource):
 
     @marshal_with(word_fields)
     def post(self):
-        word = {
-            'name': request.form.get('name', None)
-        }
+        parser = reqparse.RequestParser()
+        parser.add_argument('name', required=True)
+        word = parser.parse_args()
         try:
             return Word.put(word)
         except ValueError as e:
-            return {'error': e.args[0]}, 400
+            return abort(400, message=e.args[0])
 
 
-api.add_resource(WordsResource, '/words')
-api.add_resource(WordResource, '/words/<id_>')
-
-if __name__ == '__main__':
-    app.run(debug=True)
+def init_app(app):
+    api.add_resource(WordListResource, '/words')
+    api.add_resource(WordResource, '/words/<id_>')
+    api.init_app(app)
