@@ -2,6 +2,7 @@ from flask import Flask
 from . import cors
 from . import route
 from . import model
+from . import auth
 
 
 def create_app(config):
@@ -10,6 +11,7 @@ def create_app(config):
     cors.init_app(app)
     route.init_app(app)
     model.init_app(app)
+    auth.init_app(app)
     return app
 
 

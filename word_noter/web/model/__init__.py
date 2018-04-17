@@ -1,6 +1,6 @@
-from .base import db
-from .migrate import migrate
+from .base import db, migrate
 from .word import Word
+from .user import User
 
 
 def init_app(app):
