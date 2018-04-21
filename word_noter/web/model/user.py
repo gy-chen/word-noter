@@ -9,6 +9,8 @@ class User(db.Model):
     name = db.Column(db.String)
     picture = db.Column(db.String)
 
+    words = db.relationship('Word', back_populates='user')
+
     @classmethod
     def create_or_update(cls, user_info):
         user = cls.query.get(user_info['sub']) or User()
