@@ -17,7 +17,7 @@ class SocketIOImageRecognizer:
     """Receive image and send recognized words through SocketIO
 
     - Receive image from channel 'image'
-    - Send recognized words through channel 'word'
+    - Send recognized words through channel 'web'
     """
 
     def __init__(self, sio):
@@ -34,9 +34,9 @@ class SocketIOImageRecognizer:
         self._sio.on('image', handler=self.receive_image)
 
     async def receive_image(self, sid, data):
-        """Recognize word from the image received by channel image.
+        """Recognize web from the image received by channel image.
 
-        This method will send recognized words through channel word.
+        This method will send recognized words through channel web.
 
         :param sid:
         :param data:
@@ -50,13 +50,14 @@ class SocketIOImageRecognizer:
             await asyncio.sleep(1)
             words = recognize_words(image)
             for word in words:
-                await sio.emit('word', word)
+                await self._sio.emit('web', word)
 
+
+socket_io_image_recognizer = SocketIOImageRecognizer(sio)
 
 if __name__ == '__main__':
     from aiohttp import web
 
-    socket_io_image_recognizer = SocketIOImageRecognizer(sio)
     app = web.Application()
     sio.attach(app)
 

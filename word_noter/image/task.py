@@ -3,17 +3,22 @@ import logging
 from queue import Empty
 from word_noter.image.camera import ImageCapture
 from word_noter.image import convert_frame_to_image, rotate_frame_horizontal_to_hough_line, get_median_hough_line
-from word_noter.keybord_listener import pressed_keys
-from word_noter.image.gcloud import recognize_words
+
+from word_noter.image import gcloud
 from word_noter.keybord_listener import listener
 
-# TODO put this setting in separate file
-trigger_key = 'k'
 captured_images = asyncio.Queue()
 recognized_words = asyncio.Queue()
 
 
-async def keep_capture_image_from_user(captured_image_out_queue=captured_images, pressed_key_queue=pressed_keys):
+async def keep_capture_image_from_user(captured_image_out_queue, pressed_key_queue,
+                                       trigger_key='k'):
+    """Capture image when user press specific key
+
+    :param captured_image_out_queue: queue to store captured images
+    :param pressed_key_queue: queue to receive input key
+    :param trigger_key: the key that user press to capture image
+    """
     with ImageCapture() as cap:
         while True:
             try:
@@ -29,10 +34,13 @@ async def keep_capture_image_from_user(captured_image_out_queue=captured_images,
                 await asyncio.sleep(0)
 
 
-async def keep_recognize_words_from_image(image_in_queue=captured_images, recognized_word_out_queue=recognized_words,
-                                          recognize_words=recognize_words):
-    """Recognize words from image that captured by user intent
+async def keep_recognize_words_from_image(image_in_queue, recognized_word_out_queue,
+                                          recognize_words=gcloud.recognize_words):
+    """Recognize words from image
 
+    :param image_in_queue: queue to stored images need to recognize
+    :param recognized_word_out_queue: queue to store recognized words
+    :param recognize_words: function that used to recognize words
     :return: list of recognized words
     """
     while True:
@@ -43,8 +51,7 @@ async def keep_recognize_words_from_image(image_in_queue=captured_images, recogn
         image = convert_frame_to_image(frame)
         logging.debug('Try to recognize words from captured image')
         for word in recognize_words(image):
-            print(type(word))
-            logging.debug('recognized word: %s' % word)
+            logging.debug('recognized web: %s' % word)
             await recognized_word_out_queue.put(word)
 
 
@@ -52,11 +59,12 @@ async def start_keyboard_listener():
     listener.start()
 
 
-def create_main_task(recognized_word_out_queue=recognized_words):
+def create_main_task():
+    from word_noter.keybord_listener import pressed_keys
     return asyncio.gather(
         start_keyboard_listener(),
-        keep_capture_image_from_user(),
-        keep_recognize_words_from_image(recognized_word_out_queue=recognized_word_out_queue)
+        keep_capture_image_from_user(captured_images, pressed_keys),
+        keep_recognize_words_from_image(captured_images, recognized_words)
     )
 
 
