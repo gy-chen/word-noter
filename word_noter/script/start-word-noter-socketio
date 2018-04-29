@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+gunicorn word_noter.app.socketio:app --bind localhost:4413 --worker-class aiohttp.GunicornWebWorker

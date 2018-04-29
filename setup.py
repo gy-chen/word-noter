@@ -4,6 +4,10 @@ setup(
     name="web-noter",
     description="Help note unrecognized words while reading",
     packages=find_packages(),
+    scripts=[
+        'word_noter/script/start-word-noter-web',
+        'word_noter/script/start-word-noter-socketio'
+    ],
     install_requires=[
         'pyocr',
         'pynput',
