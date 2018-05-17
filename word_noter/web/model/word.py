@@ -9,6 +9,7 @@ class Word(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     description = db.Column(db.String)
+    date = db.Column(db.TIMESTAMP(timezone=True))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     user = db.relationship('User', back_populates='words')

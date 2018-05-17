@@ -1,15 +1,29 @@
-from flask import request
+import dateutil
+from flask import current_app
 from flask_restful import Api, Resource, marshal_with, fields, reqparse, abort
 from ..model import Word
 from ..auth import require_login, current_user
 
 api = Api()
 
+
+def _word_date_tzinfo_adjust(word):
+    """Make sure date attribute in word instance has tzinfo
+
+    :param word: word model instance
+    :return: datetime with tzinfo
+    """
+    if not word.date or word.date.tzinfo:
+        return word.date
+    tzinfo = dateutil.tz.gettz(current_app.config.get('TIMEZONE', 'UTC'))
+    return word.date.replace(tzinfo=tzinfo)
+
+
 word_fields = {
     'id': fields.Integer,
     'name': fields.String,
     'description': fields.String,
-    'date': fields.DateTime
+    'date': fields.DateTime(attribute=_word_date_tzinfo_adjust)
 }
 
 
