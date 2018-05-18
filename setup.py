@@ -27,6 +27,7 @@ setup(
         'python-socketio',
         'aiohttp',
         'flask-migrate',
-        'flask-sqlalchemy'
+        'flask-sqlalchemy',
+        'dateutil'
     ]
 )
