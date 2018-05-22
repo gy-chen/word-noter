@@ -18,3 +18,4 @@ aiohttp
 flask-migrate
 flask-sqlalchemy
 dateutil
+python-dotenv

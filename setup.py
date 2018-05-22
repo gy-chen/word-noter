@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="web-noter",
+    name="word-noter",
     description="Help note unrecognized words while reading",
     packages=find_packages(),
     scripts=[
@@ -28,6 +28,7 @@ setup(
         'aiohttp',
         'flask-migrate',
         'flask-sqlalchemy',
-        'dateutil'
+        'dateutil',
+        'python-dotenv'
     ]
 )
