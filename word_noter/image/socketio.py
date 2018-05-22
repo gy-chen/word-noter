@@ -47,10 +47,9 @@ class SocketIOImageRecognizer:
     async def recognize_job(self):
         while True:
             image = await self._received_images.get()
-            await asyncio.sleep(1)
             words = recognize_words(image)
             for word in words:
-                await self._sio.emit('web', word)
+                await self._sio.emit('word', word)
 
 
 socket_io_image_recognizer = SocketIOImageRecognizer(sio)
