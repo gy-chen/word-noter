@@ -29,6 +29,9 @@ setup(
         'flask-migrate',
         'flask-sqlalchemy',
         'dateutil',
-        'python-dotenv'
+        'python-dotenv',
+        'gunicorn',
+        'flask-simple-jwt',
+        'Authlib'
     ]
 )

@@ -19,3 +19,6 @@ flask-migrate
 flask-sqlalchemy
 dateutil
 python-dotenv
+gunicorn
+flask-jwt-simple
+Authlib
